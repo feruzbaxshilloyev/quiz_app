@@ -1,11 +1,9 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import *
 
 
 # Register your models here.
 
-class CustomUserAdmin(CustomUser):
-    fields = []
-
-
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Baza)
+admin.site.register(Test)
+admin.site.register(Category)

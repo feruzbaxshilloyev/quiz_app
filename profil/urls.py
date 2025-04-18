@@ -3,5 +3,5 @@ from .views import *
 
 app_name = 'profil'
 urlpatterns = [
-    path()
+    # path()
 ]
