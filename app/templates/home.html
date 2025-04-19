@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>🏠 Home | Baza va Testlar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .navbar-custom {
+            background: linear-gradient(90deg, #0d6efd, #6610f2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .navbar-custom a {
+            color: #fff !important;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .navbar-custom a:hover {
+            color: #d1ecf1 !important;
+        }
+        .category-title {
+            border-left: 6px solid #0d6efd;
+            padding-left: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .baza-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+        .baza-link {
+            text-decoration: none;
+            color: #0d6efd;
+        }
+        .baza-link:hover {
+            text-decoration: underline;
+        }
+        .baza-meta {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .btn-toggle:hover {
+            transform: scale(1.05);
+        }
+        .card {
+        border-radius: 15px;
+    }
+    .card-body {
+        background-color: #f8f9fa;
+        border-radius: 0 0 15px 15px;
+    }
+    .card-header {
+        border-radius: 15px 15px 0 0;
+    }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom py-3">
+    <div class="container">
+        <a class="navbar-brand text-white" href="https://t.me/fbi0223"><i class="fa-solid fa-graduation-cap me-2"></i><strong>FBI Quiz</strong></a>
+        {% if user.is_authenticated %}
+        <a class="navbar-brand text-white" href="{% url 'profil:profil' %}"><i class="fa-solid fa-user me-2"></i><strong>Profil</strong></a>
+        {% else %}
+        <a class="navbar-brand text-white" href="{% url 'profil:login' %}"><i class="fa-solid fa-right-to-bracket me-2"></i><strong>Kirish</strong></a>
+        {% endif %}
+        <div class="d-flex align-items-center">
+            <a class="nav-link d-inline text-white" href="{% url 'app:add_ctg' %}"><i class="fa-solid fa-plus me-2"></i>Kategoriya qo'shish</a>
+            <a class="nav-link d-inline text-white" href="{% url 'app:bazalar_view' %}">Bazalar</a>
+            <a class="nav-link d-inline text-white" href="{% url 'app:about' %}">About</a>
+            <a class="nav-link d-inline text-white" href="{% url 'app:contact' %}">Contact</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h1 class="mb-5 text-center">📘 <strong>Kategoriyalar</strong></h1>
+
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                        <h5 class="mb-0"><i class="fa-solid fa-layer-group me-2"></i>{{ category.name }}</h5>
+                        <span class="badge bg-light text-dark">{{ category.baza_set.count }} ta baza</span>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-outline-primary btn-sm w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#baza-{{ category.id }}">
+                            <i class="fa-solid fa-folder-open me-2"></i>Bazalarni ko‘rish
+                        </button>
+
+                        <a href="{% url 'app:add_baza' category.id %}" class="btn btn-outline-success btn-sm w-100 mb-3">
+                            <i class="fa-solid fa-plus me-2"></i>Baza qo‘shish
+                        </a>
+
+                        <div class="collapse" id="baza-{{ category.id }}">
+                            {% for baza in category.baza_set.all %}
+                                <div class="border rounded p-3 mb-3">
+                                    <h6>
+                                        <a href="{% url 'app:baza_detail' baza.id %}" class="text-decoration-none">
+                                            <i class="fa-solid fa-database me-2"></i>{{ baza.name }}
+                                        </a>
+                                    </h6>
+                                    <p class="mb-1 text-muted">
+                                        👤 {{ baza.author.username }} |
+                                        🧪 {{ baza.t_count }} ta test |
+                                        👁️ {{ baza.views }} ta yechish |
+                                        🕒 {{ baza.created|date:"d-m-Y H:i" }}
+                                    </p>
+                                    <a href="{% url 'app:baza_detail' baza.id %}" class="btn btn-outline-info btn-sm mt-2">
+                                        <i class="fa-solid fa-pen-to-square me-1"></i> Testlar
+                                    </a>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted">Hozircha baza mavjud emas.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

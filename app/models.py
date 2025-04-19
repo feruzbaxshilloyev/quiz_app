@@ -19,11 +19,16 @@ class Baza(models.Model):
 
 
 class Test(models.Model):
-    baza = models.ForeignKey(Baza, on_delete=models.CASCADE)
-    savol = models.TextField()
-    a = models.CharField(max_length=200)
-    b = models.CharField(max_length=200)
-    c = models.CharField(max_length=200)
-    d = models.CharField(max_length=200, null=True, blank=True)
-    true_var = models.CharField(max_length=1, help_text='Masalan: a')
+    baza = models.ForeignKey(Baza, on_delete=models.CASCADE, related_name='test_set')
+    savol = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='test_images/', null=True, blank=True)
+    a = models.TextField()
+    b = models.TextField()
+    c = models.TextField()
+    d = models.TextField(null=True, blank=True)
+    times = models.IntegerField(help_text="Savolni ishlash uchun vaqt", default=60)
+    true_var = models.CharField(max_length=1, choices=[('a', 'A'), ('b', 'B'), ('c', 'C'), ('d', 'D')])
+
+    def __str__(self):
+        return self.savol
 

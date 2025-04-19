@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>📚 Bazalar bo‘yicha filtr</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .category-btn {
+            margin: 5px;
+        }
+        .baza-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+        .baza-meta {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .category-title {
+            margin-bottom: 15px;
+            color: #0d6efd;
+            font-weight: 600;
+        }
+        .search-box {
+            max-width: 400px;
+            margin: auto;
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📂 Kategoriyalar bo‘yicha <strong>Bazalar</strong></h2>
+
+    <div class="text-center mb-4">
+        <a href="{% url 'app:home' %}" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left-long me-1"></i> Orqaga
+        </a>
+    </div>
+
+    <!-- 🔍 Qidiruv input -->
+    <div class="input-group mb-4 search-box">
+        <span class="input-group-text bg-primary text-white">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </span>
+        <input type="text" id="searchInput" class="form-control" placeholder="Baza yoki kategoriya nomini yozing...">
+    </div>
+
+    <!-- 📚 Kategoriya tugmalari -->
+    <div id="categoryButtons" class="d-flex flex-wrap justify-content-center">
+        <!-- Kategoriya tugmalari shu yerda dinamik tarzda joylanadi -->
+    </div>
+
+    <!-- Bazalar ro'yxati -->
+    <div id="baza-container">
+        <!-- Bazalar shu yerda dinamik tarzda joylanadi -->
+    </div>
+
+    <!-- Sahifalash -->
+    <div class="pagination-container">
+        <ul id="pagination" class="pagination">
+            <!-- Pagination tugmalari shu yerda dinamik tarzda joylanadi -->
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Baza va kategoriyalar ro'yxatini olish
+    const categories = [
+        {% for category in categories %}
+        {
+            id: {{ category.id }},
+            name: "{{ category.name }}"
+        },
+        {% endfor %}
+    ];
+
+    const bazalar = [
+        {% for baza in bazalar %}
+        {
+            id: {{ baza.id }},
+            name: "{{ baza.name }}",
+            author: "{{ baza.author.username }}",
+            t_count: {{ baza.t_count }},
+            views: {{ baza.views }},
+            created: "{{ baza.created|date:'d-m-Y H:i' }}",
+            category: {
+                id: {{ baza.category.id }},
+                name: "{{ baza.category.name }}"
+            }
+        },
+        {% endfor %}
+    ];
+
+    const itemsPerPage = 5; // Sahifada nechta baza ko‘rsatiladi
+    let currentPage = 1;
+    let filteredBazas = [...bazalar]; // Filtrlash uchun bazalar
+
+    // Bazalarni render qilish
+    function renderBazas(page) {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = page * itemsPerPage;
+        const currentBazas = filteredBazas.slice(startIndex, endIndex);
+
+        const bazaContainer = document.getElementById('baza-container');
+        bazaContainer.innerHTML = ''; // Tozalash
+
+        currentBazas.forEach(baza => {
+            const card = document.createElement('div');
+            card.className = 'card p-3 baza-card cat-' + baza.category.id;
+
+  card.innerHTML = `
+    <h5>
+        <a href="/detail/${baza.id}/" class="text-decoration-none text-primary">
+            <i class="fa-solid fa-database me-2"></i>${baza.name}
+        </a>
+    </h5>
+    <p class="baza-meta">
+        👤 ${baza.author.name} |
+        🧪 ${baza.t_count} ta test |
+        👁️ ${baza.views} ta ko‘rish |
+        🕒 ${baza.created}
+    </p>
+`;
+
+
+            bazaContainer.appendChild(card);
+        });
+
+        renderPagination();
+    }
+
+    // Sahifalashni render qilish
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredBazas.length / itemsPerPage);
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = ''; // Tozalash
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageItem = document.createElement('li');
+            pageItem.className = 'page-item';
+            pageItem.innerHTML = `<a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>`;
+            pagination.appendChild(pageItem);
+        }
+    }
+
+    // Sahifaga o‘tish
+    function goToPage(page) {
+        currentPage = page;
+        renderBazas(page);
+    }
+
+    // Kategoriya tugmasi bosilganda chaqiriladi
+    function filterBazas(categoryClass) {
+        if (categoryClass === 'all') {
+            filteredBazas = [...bazalar];
+        } else {
+            filteredBazas = bazalar.filter(baza => 'cat-' + baza.category.id === categoryClass);
+        }
+        renderBazas(1); // Filtrlashdan so‘ng 1-sahifaga o‘tish
+    }
+
+    // Qidiruv funksiyasi
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+
+        filteredBazas = bazalar.filter(baza => {
+            const text = `${baza.name} ${baza.category.name}`.toLowerCase();
+            return text.includes(searchTerm);
+        });
+
+        renderBazas(1); // Qidiruvdan so‘ng sahifani yangilash
+    });
+
+    // Kategoriya tugmalarini render qilish
+    function renderCategories() {
+        const categoryButtons = document.getElementById('categoryButtons');
+        categoryButtons.innerHTML = ''; // Tozalash
+
+        const allButton = document.createElement('button');
+        allButton.className = 'btn btn-outline-primary category-btn';
+        allButton.onclick = () => filterBazas('all');
+        allButton.textContent = 'Barchasi';
+        categoryButtons.appendChild(allButton);
+
+        categories.forEach(category => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline-primary category-btn';
+            button.onclick = () => filterBazas('cat-' + category.id);
+            button.textContent = category.name;
+            categoryButtons.appendChild(button);
+        });
+    }
+
+    // Boshlanishda kategoriyalarni va bazalarni render qilish
+    renderCategories();
+    renderBazas(currentPage);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
