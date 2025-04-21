@@ -23,7 +23,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=12)
+    phone = models.CharField()
     address = models.CharField()
     true_quiz = models.IntegerField(default=0, blank=True, null=True)
     total_quiz = models.IntegerField(default=0, blank=True, null=True)
