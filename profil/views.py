@@ -51,11 +51,10 @@ def login_view(request):
             auth_login(request, user)
             return redirect('app:home')
         else:
-            return redirect('app:home')
+            pass
     return render(request, 'login.html')
 
 
-# Logout view
 def logout_view(request):
     auth_logout(request)
     return redirect('app:home')

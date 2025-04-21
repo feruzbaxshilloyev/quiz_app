@@ -12,8 +12,8 @@ urlpatterns = [
     path('bazalar/', bazalar_view, name='bazalar_view'),
     path('add_test/<int:id>/', add_test, name='add_test'),
     path('kategoriya_qoshish/', add_category, name='add_ctg'),
-    path('submit-answer/', submit_answer, name='submit_answer'),
-    path('delete-baza/<int:id>/', delete_baza, name='delete_baza'),
+    path('submit_answer/', submit_answer, name='submit_answer'),
+    path('delete_baza/<int:id>/', delete_baza, name='delete_baza'),
 
 
 ]

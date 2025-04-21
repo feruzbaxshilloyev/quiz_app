@@ -125,6 +125,8 @@ def add_test(request, id):
             true_var=true_var.lower(),
             times=times
         )
+        baza.t_count += 1
+        baza.t_count.save()
         return redirect('app:baza_detail', id=baza.id)
 
     return render(request, 'add_test.html', {'baza': baza})

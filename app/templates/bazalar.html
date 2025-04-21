@@ -43,7 +43,7 @@
 <body>
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4">📂 Kategoriyalar bo‘yicha <strong>Bazalar</strong></h2>
+    <h2 class="text-center mb-4">📂<strong>Bazalar</strong></h2>
 
     <div class="text-center mb-4">
         <a href="{% url 'app:home' %}" class="btn btn-outline-secondary">
@@ -129,9 +129,9 @@
         </a>
     </h5>
     <p class="baza-meta">
-        👤 ${baza.author.name} |
+        👤 ${baza.author} |
         🧪 ${baza.t_count} ta test |
-        👁️ ${baza.views} ta ko‘rish |
+        👁️ ${baza.views} ta yechish |
         🕒 ${baza.created}
     </p>
 `;
